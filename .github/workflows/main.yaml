@@ -1,0 +1,45 @@
+name: Event Hub Integration Test
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  id-token: write  # This is required for requesting the OIDC JWT
+  contents: read   # This is required for actions/checkout
+
+jobs:
+  test-eventhub:
+    runs-on: ubuntu-latest
+    environment: dev 
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install Dependencies
+        run: |
+          pip install azure-eventhub azure-identity
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run Event Hub Test
+        env:
+          EVENTHUB_NAMESPACE: ${{ vars.EVENTHUB_NAMESPACE }} # e.g., "my-hub-ns"
+          EVENTHUB_NAME: ${{ vars.EVENTHUB_NAME }}           # e.g., "my-hub"
+        run: python tests/test_eventhub.py
