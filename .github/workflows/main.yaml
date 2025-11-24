@@ -12,7 +12,7 @@ permissions:
 jobs:
   test-eventhub:
     runs-on: ubuntu-latest
-    environment: dev 
+    environment: dev
 
     steps:
       - name: Checkout Code
@@ -42,4 +42,4 @@ jobs:
         env:
           EVENTHUB_NAMESPACE: ${{ vars.EVENTHUB_NAMESPACE }} # e.g., "my-hub-ns"
           EVENTHUB_NAME: ${{ vars.EVENTHUB_NAME }}           # e.g., "my-hub"
-        run: python tests/test_eventhub.py
+        run: python even_hub_test.py
